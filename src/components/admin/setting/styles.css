@@ -1,0 +1,15 @@
+.MuiPickersCalendarHeader-label {
+  margin-right: -42px !important;
+}
+
+.MuiPickersCalendarHeader-switchViewIcon {
+  display: none !important;
+}
+
+.css-1wjkg3 {
+  display: none !important;
+}
+
+.css-12mkn7b-MuiButtonBase-root-MuiIconButton-root-MuiPickersCalendarHeader-switchViewButton {
+  display: none !important;
+}
