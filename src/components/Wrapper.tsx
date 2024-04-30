@@ -4,7 +4,6 @@ import { Box, CssBaseline, Toolbar } from "@mui/material";
 //custom components
 import Header from "./admin/AdminHeader";
 import Sidebar from "./admin/AdminSidebar";
-import Footer from "./Footer";
 import { drawerWidth } from "@/static/commonVariables";
 import { useRouter } from "next/navigation";
 import Loader from "./common/Loader";
@@ -32,6 +31,8 @@ const Wrapper = ({ isScrollable, children }: WrapperPropsType) => {
 
   const startLoading = () => {
     setLoading(true);
+
+    setTimeout(() => setLoading(false), 5000);
   };
 
   if (!authenticated) return <Loader />;
@@ -67,7 +68,7 @@ const Wrapper = ({ isScrollable, children }: WrapperPropsType) => {
             </Box>
           </Box>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
 };

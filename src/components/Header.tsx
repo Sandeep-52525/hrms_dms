@@ -21,18 +21,18 @@ const Header = () => {
         fill="#00172B"
         fillOpacity="0.6"
       />
-      <text className="font-bold" fill="white" x="300" y="70" fontSize="24">
+      {/* <text className="font-bold" fill="white" x="300" y="70" fontSize="24">
         INDEPENDENT ACCOUNTANT 401K AUDIT DOCUMENT REQUEST
-      </text>
+      </text> */}
       <Link href="https://www.bdgcpa.com/" target="_blank">
-        <text className="font-bold" fill="white" x="1150" y="70" fontSize="14">
+        {/* <text className="font-bold" fill="white" x="1150" y="70" fontSize="14">
           Contact&nbsp;&nbsp;|
-        </text>
+        </text> */}
       </Link>
       <Link href="https://www.bdgcpa.com/" target="_blank">
-        <text className="font-bold" fill="white" x="1230" y="70" fontSize="14">
+        {/* <text className="font-bold" fill="white" x="1230" y="70" fontSize="14">
           About Us
-        </text>
+        </text> */}
       </Link>
     </svg>
   );

@@ -72,7 +72,7 @@ const useStyles = makeStyles({
   },
   drawer: {
     background: "#223E99",
-    height: `calc(100% - 36px)`,
+    height: `calc(100%)`,
   },
 });
 
@@ -132,7 +132,7 @@ const Sidebar = ({
   const classes = useStyles();
   const pathname = usePathname();
   const [isOpen, setIsopen] = useState<boolean>(
-    pathname === "/admin/setting" || pathname === "/admin/audit" ? true : false
+    pathname === "/admin/manage-form" ? true : false
   );
 
   return (

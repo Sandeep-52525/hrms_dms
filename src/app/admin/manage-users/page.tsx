@@ -1,16 +1,18 @@
 "use client";
 import { callAPIwithHeaders, callAPIwithParams } from "@/api/commonAPI";
+import LinksDialog from "@/components/LinksDialog";
 import Wrapper from "@/components/Wrapper";
 import Loader from "@/components/common/Loader";
-import { Add } from "@mui/icons-material";
+import { Add, MoreVert } from "@mui/icons-material";
 import {
-  Autocomplete,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  TablePagination,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   TextField,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -18,17 +20,19 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Page = () => {
+  const [links, setLinks] = useState<any>([]);
   const [userData, setUserData] = useState([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
+  const [moreActionsClickedRowId, setmoreActionsClickedRowId] = useState(-1);
   const [userFormData, setUserFormData] = useState({
     firstName: "",
     middleName: "",
     lastName: "",
     email: "",
     contactPhone: "",
-    roleId: 0,
+    roleId: "2",
     isActive: true,
     id: 0,
     password: "",
@@ -52,12 +56,12 @@ const Page = () => {
 
   const sendInvite = (id: number) => {
     setLoaded(false);
-    console.log(id);
 
     const callBack = async (status: boolean, message: string, data: any) => {
       if (status) {
+        setLinks([data.link]);
         setLoaded(true);
-        toast.success(message);
+        // toast.success(message);
       } else {
         setLoaded(true);
         toast.error(message);
@@ -73,12 +77,51 @@ const Page = () => {
     );
   };
 
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    const callBack = async (status: boolean, message: string, data: any) => {
+      setDialogOpen(false);
+      setUserFormData({
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        email: "",
+        contactPhone: "",
+        roleId: "2",
+        isActive: true,
+        id: 0,
+        password: "",
+      });
+      if (status) {
+        toast.success(message);
+        getManageUserData();
+      } else {
+        toast.error(message);
+      }
+    };
+
+    callAPIwithHeaders("/User/AddUpdateUser", "post", callBack, userFormData);
+  };
+
   useEffect(() => {
     getManageUserData();
   }, []);
 
   const handleClose = () => {
     setDialogOpen(false);
+    setUserFormData({
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      email: "",
+      contactPhone: "",
+      roleId: "2",
+      isActive: true,
+      id: 0,
+      password: "",
+    });
+    setEmailError(false);
   };
 
   const columns: GridColDef[] = [
@@ -105,16 +148,6 @@ const Page = () => {
         </span>
       ),
     },
-    // {
-    //   field: "department",
-    //   headerName: "Department",
-    //   flex: 1,
-    //   renderHeader: (params) => (
-    //     <span className="capitalize font-semibold text-sm text-[#535255]">
-    //       Department
-    //     </span>
-    //   ),
-    // },
     {
       field: "contactPhone",
       headerName: "Mobile",
@@ -147,26 +180,47 @@ const Page = () => {
       },
     },
     {
+      field: "roleId",
+      headerName: "Role",
+      flex: 1,
+      renderHeader: (params) => (
+        <span className="capitalize font-semibold text-sm text-[#535255]">
+          Role
+        </span>
+      ),
+      renderCell: (params) => {
+        return <div>{params.value === 1 ? "Admin" : "Candidate"}</div>;
+      },
+    },
+
+    {
       field: "id",
       headerName: "Action",
-      flex: 1,
+      hideable: false,
       renderHeader: (params) => (
         <span className="capitalize font-semibold text-sm text-[#535255]">
           Action
         </span>
       ),
+      width: 80,
+      sortable: false,
       renderCell: (params) => {
         return (
-          <div className="flex gap-4">
+          <div>
             <span
-              className="underline cursor-pointer text-blue-600"
-              onClick={() => {
-                sendInvite(params.row.id);
-              }}
+              className={`relative cursor-pointer`}
+              onClick={() =>
+                setmoreActionsClickedRowId((prev) =>
+                  prev !== params.row.id ? params.row.id : -1
+                )
+              }
             >
-              Send Invite
+              <MoreVert />
             </span>
-            <span className="underline cursor-pointer text-blue-600">View</span>
+
+            {moreActionsClickedRowId === params.row.id && (
+              <MoreActions onInviteSent={() => sendInvite(params.value)} />
+            )}
           </div>
         );
       },
@@ -179,7 +233,9 @@ const Page = () => {
       <Wrapper>
         <div className="flex-row flex flex-wrap pb-2 justify-between w-full">
           <div className="mx-5 justify-between flex flex-wrap w-full">
-            <div className="justify-start flex items-center">Manage Users</div>
+            <div className="justify-start flex items-center font-semibold">
+              Manage Users
+            </div>
 
             <Button
               className="flex gap-2"
@@ -205,38 +261,16 @@ const Page = () => {
               getRowId={(row) => row.id}
               rows={userData}
               columns={columns}
-              //   slots={{
-              //     footer: () => (
-              //       <div className="flex justify-end">
-              //         <TablePagination
-              //           rowsPerPage={10}
-              //           onPageChange={() => {}}
-              //           onRowsPerPageChange={() => {}}
-              //           count={0}
-              //           page={0}
-              //           rowsPerPageOptions={[5, 10, 15]}
-              //         />
-              //       </div>
-              //     ),
-              //   }}
             />
           </div>
         </div>
       </Wrapper>
-
       <Dialog
         open={dialogOpen}
         onClose={handleClose}
         PaperProps={{
           component: "form",
-          //   onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          //     event.preventDefault();
-          //     const formData = new FormData(event.currentTarget);
-          //     const formJson = Object.fromEntries((formData as any).entries());
-          //     const email = formJson.email;
-          //     console.log(email);
-          //     handleClose();
-          //   },
+          onSubmit: handleSubmit,
         }}
       >
         <DialogTitle>Enter User Details</DialogTitle>
@@ -308,23 +342,55 @@ const Page = () => {
               }
             }}
           />
-          {/* <Autocomplete
-            className="mt-1"
-            options={[]}
-            renderInput={(params) => (
-              <TextField {...params} label="Department" variant="standard" />
-            )}
-          /> */}
+          <RadioGroup
+            className="!flex !flex-row !gap-2"
+            value={userFormData.roleId}
+            onChange={(e) =>
+              setUserFormData({ ...userFormData, roleId: e.target.value })
+            }
+          >
+            <FormControlLabel value="1" control={<Radio />} label="Admin" />
+            <FormControlLabel value="2" control={<Radio />} label="Candidate" />
+          </RadioGroup>
         </DialogContent>
         <DialogActions>
           <Button color="error" onClick={handleClose}>
             Cancel
           </Button>
-          <Button>Submit</Button>
+          <Button type="submit">Submit</Button>
         </DialogActions>
       </Dialog>
+      <LinksDialog
+        links={links}
+        handleClose={() => {
+          setmoreActionsClickedRowId(-1);
+          setLinks([]);
+        }}
+      />
     </>
   );
 };
 
 export default Page;
+
+const MoreActions = ({ onInviteSent }: any) => {
+  const actions = ["send invite", "view"];
+  const actionStyle =
+    "flex capitalize text-sm px-6 py-1 cursor-pointer hover:bg-slate-100";
+
+  return (
+    <div className="py-2 absolute right-16 bg-white shadow-lg z-10 rounded">
+      {actions.map((action: string) => (
+        <span
+          key={action}
+          className={actionStyle}
+          onClick={
+            action.toLowerCase() === "send invite" ? onInviteSent : undefined
+          }
+        >
+          {action}
+        </span>
+      ))}
+    </div>
+  );
+};

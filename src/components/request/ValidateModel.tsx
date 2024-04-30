@@ -1,5 +1,9 @@
 import { ChangeEvent, useState } from "react";
 import { Button, DialogContent, DialogActions, TextField } from "@mui/material";
+import {
+  callAPIwithHeadersForRequest,
+  callAPIwithoutHeaders,
+} from "@/api/commonAPI";
 
 interface FieldsType {
   email: string;
@@ -10,7 +14,7 @@ interface ValidateModelPropsType {
   email: string;
   pin: string;
   isLoaded: (arg1: boolean) => void;
-  verifyToken: (arg1: string, arg2: string) => void;
+  verifyToken: (arg1: string) => void;
 }
 
 const initialState = {
@@ -33,12 +37,12 @@ const ValidateModel = ({
 
   const handleValidationFieldsChange = (e: ChangeEvent<HTMLInputElement>) => {
     setErrorMsg(initialState);
-    if (
-      e.target.name === "accessPIN" &&
-      (!/(^[a-zA-Z0-9]+$|^$)/.test(e.target.value) || e.target.value.length > 6)
-    ) {
-      return;
-    }
+    // if (
+    //   e.target.name === "accessPIN" &&
+    //   (!/(^[a-zA-Z0-9]+$|^$)/.test(e.target.value) || e.target.value.length > 6)
+    // ) {
+    //   return;
+    // }
 
     setValidationFields({
       ...validationFields,
@@ -92,15 +96,6 @@ const ValidateModel = ({
       <DialogContent>
         <TextField
           className="!my-2 w-full"
-          name="email"
-          label="Email"
-          error={!!errorMsg.email}
-          helperText={errorMsg.email}
-          value={validationFields.email}
-          onChange={handleValidationFieldsChange}
-        />
-        <TextField
-          className="!my-2 w-full"
           name="accessPIN"
           label="Security Code"
           error={!!errorMsg.accessPIN}
@@ -111,12 +106,13 @@ const ValidateModel = ({
       </DialogContent>
       <DialogActions className="w-[98%]">
         <Button
-          onClick={() => {
-            if (validateInputs()) {
-              isLoaded(false);
-              verifyToken(validationFields.email, validationFields.accessPIN);
-            }
-          }}
+          onClick={() => verifyToken(validationFields.accessPIN)}
+          // onClick={() => {
+          //   if (validateInputs()) {
+          //     isLoaded(false);
+          //     verifyToken(validationFields.email, validationFields.accessPIN);
+          //   }
+          // }}
         >
           Login
         </Button>

@@ -5,6 +5,6 @@ export interface LinksType {
 }
 
 export interface LinksDialogProps {
-  links: LinksType[];
+  links: any[];
   handleClose: () => void;
 }

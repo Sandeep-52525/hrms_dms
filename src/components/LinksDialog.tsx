@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 import { LinksDialogProps, LinksType } from "@/types/LinksDialog";
 
 const LinksDialog = ({ links, handleClose }: LinksDialogProps) => {
-  const url = new URL(process.env.app_url!);
+  const url = new URL("http://localhost:3000/");
   return (
     <Dialog
       open={links.length > 0}
@@ -38,28 +38,24 @@ const LinksDialog = ({ links, handleClose }: LinksDialogProps) => {
       <DialogContent>
         <DialogContentText id="alert-dialog-description" className="w-full">
           <div className="flex !flex-col">
-            {links.map((link: LinksType) => {
-              url.pathname = "/request";
-              url.searchParams.set("id", link.guid);
+            {links.map((link: any) => {
+              // url.pathname = "/request";
+              // url.searchParams.set("id", link.guid);
               return (
-                <span
-                  className="flex !items-center !justify-center"
-                  key={link.guid}
-                >
+                <span className="flex !items-center !justify-center" key={link}>
                   <Button
                     variant="contained"
                     className="flex !items-center !justify-center !rounded-r-sm !my-2 !h-[36px] !w-[75%] !bg-[#223E99] !text-[10px]"
                     onClick={async () => {
-                      navigator.clipboard.writeText(
-                        `${process.env.app_url}/request?id=${link.guid}`
-                      );
+                      navigator.clipboard.writeText(link);
                       toast.success(
-                        `${link.reportGroup} Reports Link Copied Successfully.`,
+                        `Validate Code copied sucessfully`,
                         toastOptions
                       );
                     }}
                   >
-                    {link.reportGroup}&nbsp;Reports
+                    {/* {link.reportGroup}&nbsp;Reports */}
+                    Copy Validate Code
                   </Button>
                   <span className="flex !items-center !justify-center !h-[36px] !w-[15%] !inset-y-0 !bg-gray-200 !rounded-r-sm">
                     <LinkIcon className="text-[#223E99]" />
